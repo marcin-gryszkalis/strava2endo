@@ -34,10 +34,12 @@ $rev =~ s/.*?(\d+).*/v$1/;
 
 # command line
 my $opt_gpx = undef;
+my $opt_proxy = undef;
 my $opt_help = 0;
 
 GetOptions(
         "gpx|g=s"            => \$opt_gpx,
+        "proxy|p=s"          => \$opt_proxy,
         # "directory|d=s"         => \$opt_dir,
         # "user|u=s"              => \$opt_user,
         # "suid|s"                => \$opt_suid,
@@ -57,6 +59,7 @@ Usage:
 
 Options:
 	--gpx or -g filename.gpx 
+    --proxy or -p http://proxy_ip:proxy_port
 	# --first or -f (ony first page)
     # --directory or -d directory_name (absolute, reuired)
     # --user or -u username    
@@ -94,7 +97,12 @@ $mech->agent_alias("Linux Mozilla");
 # $mech->ssl_opts( SSL_verify_mode => IO::Socket::SSL::SSL_VERIFY_NONE, SSL_hostname => '', verify_hostname => 0 );
 $mech->ssl_opts( SSL_verify_mode => IO::Socket::SSL::SSL_VERIFY_NONE);
 
-# $mech->proxy('http', 'http://127.0.0.1:8080');
+if (defined $opt_proxy)
+{
+    $mech->proxy('http', $opt_proxy);
+    $mech->proxy('https', $opt_proxy);
+    LOG "proxy: $opt_proxy";
+}
 
 $mech->get("$E/login");
 
